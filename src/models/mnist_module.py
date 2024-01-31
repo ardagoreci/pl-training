@@ -2,6 +2,7 @@ from typing import Any, Dict, Tuple
 
 import torch
 from lightning import LightningModule
+from lightning.pytorch.utilities import grad_norm
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
 
@@ -126,10 +127,15 @@ class MNISTLitModule(LightningModule):
         self.train_loss(loss)
         self.train_acc(preds, targets)
         self.log("train/loss", self.train_loss, on_step=True, on_epoch=False, prog_bar=False)
-        self.log("train/acc", self.train_acc, on_step=True, on_epoch=False, prog_bar=False)
+        self.log("train/acc", self.train_acc, on_step=False, on_epoch=True, prog_bar=False)
 
         # return loss or backpropagation will fail
         return loss
+
+    def on_before_optimizer_step(self, optimizer):
+        """Keeps an eye on gradient norms during training."""
+        norms = grad_norm(self.layer, norm_type=2)
+        self.log_dict(norms)
 
     def on_train_epoch_end(self) -> None:
         """Lightning hook that is called when a training epoch ends."""
