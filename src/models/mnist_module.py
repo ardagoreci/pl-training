@@ -125,14 +125,14 @@ class MNISTLitModule(LightningModule):
         # update and log metrics
         self.train_loss(loss)
         self.train_acc(preds, targets)
-        self.log("train/loss", self.train_loss, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("train/acc", self.train_acc, on_step=False, on_epoch=True, prog_bar=False)
+        self.log("train/loss", self.train_loss, on_step=True, on_epoch=False, prog_bar=False)
+        self.log("train/acc", self.train_acc, on_step=True, on_epoch=False, prog_bar=False)
 
         # return loss or backpropagation will fail
         return loss
 
     def on_train_epoch_end(self) -> None:
-        "Lightning hook that is called when a training epoch ends."
+        """Lightning hook that is called when a training epoch ends."""
         pass
 
     def validation_step(self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int) -> None:
