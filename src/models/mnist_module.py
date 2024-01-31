@@ -134,7 +134,7 @@ class MNISTLitModule(LightningModule):
 
     def on_before_optimizer_step(self, optimizer):
         """Keeps an eye on gradient norms during training."""
-        norms = grad_norm(self.layer, norm_type=2)
+        norms = grad_norm(self.net, norm_type=2)
         self.log_dict(norms)
 
     def on_train_epoch_end(self) -> None:
